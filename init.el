@@ -26,8 +26,6 @@
   (setq company-minimum-prefix-length 1)
   (setq company-idle-delay 0))
 
-;; GIT
-
 ;; VIM
 (use-package evil
   :init
@@ -43,6 +41,13 @@
   :config
   (evil-mode 1))
 
+;; GIT
+(use-package magit
+  :config
+  (evil-leader/set-key
+    "gs" 'magit-status
+    "gg" 'magit-dispatch
+    "gx" 'magit-file-dispatch))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
