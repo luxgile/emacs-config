@@ -29,6 +29,9 @@ tramp
 # LSP files
 *.lsp*
 
+# Treemacs files
+.cache
+
 # reftex files
 *.rel
 

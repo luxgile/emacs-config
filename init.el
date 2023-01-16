@@ -32,10 +32,33 @@
   :config
   (load-theme 'dracula t))
 (set-face-attribute 'default nil :font "JetBrains Mono" :height 120)
-(global-display-line-numbers-mode)
 (setq display-line-numbers 'relative)
+(setq font-lock-maximum-decoration t)
 
-;; AUTOCOMPLETE
+;; WHICK-KEY
+(use-package which-key
+  :straight t
+  :config
+  (which-key-mode))
+
+;; SYNTAX ERRORS
+(use-package flycheck
+  :straight t
+  :init (global-flycheck-mode))
+
+;; SYNTAX PARSER - TODO: remove with EMACS 29
+(use-package tree-sitter
+  :straight t
+  :config
+  (global-tree-sitter-mode))
+
+(use-package tree-sitter-langs
+  :straight t)
+
+(use-package tree-sitter-indent
+  :straight t)
+
+;; TEXT AUTOCOMPLETE
 (use-package company
   :straight t
   :hook
@@ -45,22 +68,44 @@
   (setq company-minimum-prefix-length 1)
   (setq company-idle-delay 0))
 
+;; CMD AUTOCOMPLETE
+(use-package vertico
+  :straight t
+  :config
+  (vertico-mode))
+
 ;; VIM
 (use-package evil
   :straight t 
-  :init
-  (use-package evil-leader
-    :straight t
-    :config
-    (global-evil-leader-mode)
-    (evil-leader/set-leader "<SPC>")
-    (evil-leader/set-key
-      "pc" '(lambda () (interactive) (find-file "~/.emacs.d/init.el"))
-      "pr" '(lambda () (interactive) (load-file "~/.emacs.d/init.el"))
-      "bb" 'bs-show
-      "fb" 'dired))
   :config
   (evil-mode 1))
+
+(use-package evil-leader
+  :after (evil)
+  :straight t
+  :config
+  (global-evil-leader-mode)
+  (evil-leader/set-leader "<SPC>")
+  (evil-leader/set-key
+    "pc" '(lambda () (interactive) (find-file "~/.emacs.d/init.el"))
+    "pr" '(lambda () (interactive) (load-file "~/.emacs.d/init.el"))
+    "bb" 'bs-show
+    "fb" 'dired))
+
+;; TREE VIEW API
+(use-package treemacs
+  :straight t
+  :config
+  (evil-leader/set-key
+    "ft" 'treemacs))
+
+(use-package treemacs-evil
+  :after (treemacs)
+  :straight t)
+
+(use-package treemacs-magit
+  :after (treemacs)
+  :straight t)
 
 ;; GIT
 (use-package magit
@@ -80,9 +125,24 @@
 (use-package lsp-mode
   :straight t
   :bind-keymap
-  ("C-c l" . lsp-command-map)
+  ("C-c lo" . lsp-command-map)
   :custom
-  (lsp-keymap-prefix "C-c l"))
+  (lsp-keymap-prefix "C-c lo")
+  :config
+  (evil-leader/set-key
+    "kf" 'lsp-format-buffer
+    "kd" 'lsp-find-definition
+    "kr" 'lsp-find-references
+    "ka" 'lsp-execute-code-action))
+
+(use-package lsp-ui
+  :straight t)
+
+(use-package lsp-treemacs
+  :straight t
+  :after (lsp-mode)
+  :config
+  (lsp-treemacs-sync-mode 1))
 
 ;; C#
 (use-package csharp-mode
@@ -93,6 +153,9 @@
     (lsp))
   (add-hook 'csharp-mode-hook #'my/csharp-mode-hook))
 
+;; RUST
+(use-package rust-mode
+  :straight t)
 
 ;; INTERNAL
 (custom-set-variables
