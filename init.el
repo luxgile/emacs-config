@@ -15,11 +15,16 @@
 ;; USE-PACKAGE
 (straight-use-package 'use-package)
 
+;; START SERVER
+(server-start)
+
 ;; HUD
 (setq visible-bell 1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
+(setq inhibit-startup-message t) 
+(setq initial-scratch-message nil)
 
 ;; THEME
 (use-package dracula-theme
@@ -70,6 +75,24 @@
 (use-package unity
   :straight (unity :type git :host github :repo "elizagamedev/unity.el")
   :hook after-init)
+
+;; LSP
+(use-package lsp-mode
+  :straight t
+  :bind-keymap
+  ("C-c l" . lsp-command-map)
+  :custom
+  (lsp-keymap-prefix "C-c l"))
+
+;; C#
+(use-package csharp-mode
+  :straight t
+  :init
+  (defun my/csharp-mode-hook ()
+    (setq-local lsp-auto-guess-root t)
+    (lsp))
+  (add-hook 'csharp-mode-hook #'my/csharp-mode-hook))
+
 
 ;; INTERNAL
 (custom-set-variables
