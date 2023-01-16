@@ -22,6 +22,10 @@ tramp
 # elpa packages
 /elpa/
 
+# straight packages
+/straight/
+/transient/
+
 # reftex files
 *.rel
 

@@ -1,9 +1,19 @@
-(require 'package)
-(eval-when-compile
-  (require 'use-package))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(package-initialize)
-(package-refresh-contents)
+;; Install straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; USE-PACKAGE
+(straight-use-package 'use-package)
 
 ;; HUD
 (setq visible-bell 1)
@@ -12,13 +22,17 @@
 (tool-bar-mode -1)
 
 ;; THEME
-(load-theme 'dracula t)
+(use-package dracula-theme
+  :straight t
+  :config
+  (load-theme 'dracula t))
 (set-face-attribute 'default nil :font "JetBrains Mono" :height 120)
 (global-display-line-numbers-mode)
 (setq display-line-numbers 'relative)
 
 ;; AUTOCOMPLETE
 (use-package company
+  :straight t
   :hook
   (after-init . global-company-mode)
   :config
@@ -28,8 +42,10 @@
 
 ;; VIM
 (use-package evil
+  :straight t 
   :init
   (use-package evil-leader
+    :straight t
     :config
     (global-evil-leader-mode)
     (evil-leader/set-leader "<SPC>")
@@ -43,12 +59,19 @@
 
 ;; GIT
 (use-package magit
+  :straight t
   :config
   (evil-leader/set-key
     "gs" 'magit-status
     "gg" 'magit-dispatch
     "gx" 'magit-file-dispatch))
 
+;; UNITY
+(use-package unity
+  :straight (unity :type git :host github :repo "elizagamedev/unity.el")
+  :hook after-init)
+
+;; INTERNAL
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
